@@ -1,13 +1,17 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import Navbar from './components/Navbar.vue'
+import Footer from './components/Footer.vue'
 </script>
 
 <template>
-  <div>
-    <Navbar></Navbar>
-    <div class="max-w-3xl mx-auto my-0 p-4">
+  <div class="min-h-screen ">
+    
+    <main class="">
       <RouterView />
-    </div>
+    </main>
+    <footer class="justify-between sticky top-[100vh]">
+      <Footer  />
+    </footer>
   </div>
 </template>

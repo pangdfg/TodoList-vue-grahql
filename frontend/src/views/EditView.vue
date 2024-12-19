@@ -2,21 +2,17 @@
 import { onMounted, ref, reactive } from 'vue'
 import { useTodoStore } from '../stores/todo'
 import { useRoute, RouterLink } from 'vue-router'
+import Navbar from '../components/Navbar.vue'
+
 
 import Loading from '../components/Loading.vue'
 
 const todoStore = useTodoStore()
 const route = useRoute()
 
-const todoId = ref(-1)
-/* Status */
+const todoData = ref(null);
 const isLoading = ref(false)
 const isUpdated = ref(false)
-const isLoaded = ref(false)
-const todoData = reactive({
-  name: '',
-  status: ''
-})
 
 const editTodo = async (todoData, todoId) => {
   try {
@@ -24,7 +20,7 @@ const editTodo = async (todoData, todoId) => {
     await todoStore.editTodo(todoData, todoId)
     isUpdated.value = true
     isLoading.value = false
-    // set update ออกไป
+
     setTimeout(() => {
       isUpdated.value = false
     }, 2000)
@@ -36,11 +32,8 @@ const editTodo = async (todoData, todoId) => {
 onMounted(async () => {
   try {
     isLoading.value = true
-    todoId.value = parseInt(route.params.id)
-    await todoStore.loadTodo(todoId.value)
-    todoData.name = todoStore.selectedTodo.name
-    todoData.status = todoStore.selectedTodo.status
-    isLoaded.value = true
+    const id = parseInt(route.params.id); 
+    todoData.value = await todoStore.loadTodo(id);
     isLoading.value = false
   } catch (error) {
     console.log('error', error)
@@ -49,6 +42,11 @@ onMounted(async () => {
 </script>
 
 <template>
+<div>
+  <header class=" justify-between">
+      <Navbar />
+    </header>
+    <div class="max-w-4xl mx-auto p-4 mb-auto center">
   <div class="w-1/2 mx-auto">
     <div class="flex items-center">
       <Loading v-if="isLoading"></Loading>
@@ -65,7 +63,7 @@ onMounted(async () => {
     <div class="flex flex-col" v-if="isLoaded">
       <div class="flex gap-4">
         <div class="text-sm ml-1">Item id</div>
-        <span class="badge badge-primary">12</span>
+        <span class="badge badge-primary">{{ todoData.id }}</span>
       </div>
       <div class="form-control">
         <label class="label">
@@ -88,7 +86,7 @@ onMounted(async () => {
         </select>
       </div>
       <div class="mt-4">
-        <button class="btn btn-primary w-full" @click="editTodo(todoData, todoId)">
+        <button class="btn btn-primary w-full" @click="editTodo(todoData, todoData.id)">
           Update
         </button>
       </div>
@@ -98,6 +96,8 @@ onMounted(async () => {
         <span>Update successful.</span>
       </div>
     </div>
+  </div>
+  </div>
   </div>
 </template>
 

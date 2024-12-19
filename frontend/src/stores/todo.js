@@ -5,7 +5,7 @@ export const useTodoStore = defineStore('todo', {
   state: () => ({
     list: [],
     selectedTodo: {},
-    statuses: ['Pending', 'Doing', 'Done']
+    statuses: ['All','Pending', 'Done']
   }),
   actions: {
     async loadTodos () {
@@ -13,7 +13,17 @@ export const useTodoStore = defineStore('todo', {
         // Using fake data instead of real API call
         this.list = [
           { id: 1, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 2, name: 'Todo 2', status: 'Doing', isDone: false },
+          { id: 10, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 11, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 12, name: 'Todoqweasd', status: 'Pending', isDone: false },
+          { id: 13, name: 'Todo 1qwdasdqwr', status: 'Pending', isDone: false },
+          { id: 14, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 15, name: 'Todoasdasdasdasdasdasdasdasdasdasdasdasdasdadasd', status: 'Pending', isDone: false },
+          { id: 16, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 17, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 18, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 19, name: 'Todo 1', status: 'Pending', isDone: false },
+          { id: 110, name: 'Todo 1', status: 'Pending', isDone: false },
           { id: 3, name: 'Todo 3', status: 'Done', isDone: true }
         ];
       } catch (error) {
@@ -22,8 +32,12 @@ export const useTodoStore = defineStore('todo', {
     },
     async loadTodo (id) {
       try {
-        // Using fake data instead of real API call
-        this.selectedTodo = { id: id, name: `Todo ${id}`, status: 'Pending', isDone: false };
+        const todoData = this.todoStore.list.find(todo => todo.id === id);
+        if (todoData) {
+          this.selectedTodo = todoData;
+        } else {
+          console.error(`Todo with ID ${id} not found`);
+        }
       } catch (error) {
         console.log('error', error)
       }

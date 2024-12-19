@@ -5,7 +5,6 @@ import { RouterLink } from 'vue-router'
 import { useTodoStore } from '../stores/todo'
 
 import Loading from '../components/Loading.vue'
-import Navbar from '../components/Navbar.vue'
 
 
 const todoStore = useTodoStore()
@@ -78,7 +77,6 @@ const removeTodo = async (id) => {
 
 <template>
   <div>
-    <Navbar ></Navbar>
     <div class="flex">
       <input
         class="input input-bordered input-info w-full"

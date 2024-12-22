@@ -1,17 +1,19 @@
 <script setup>
 import { RouterView } from 'vue-router'
-import Navbar from './components/Navbar.vue'
-import Footer from './components/Footer.vue'
+import Toast from '@/components/Toast.vue'
+import { useEventStore } from '@/stores/event'
+
+const eventStore = useEventStore()
 </script>
 
 <template>
-  <div class="min-h-screen ">
-    
-    <main class="">
+  <div>
+    <Toast
+      v-if="eventStore.alert"
+      :status="eventStore.data.status"
+      :message="eventStore.data.message"
+    >
+    </Toast>
       <RouterView />
-    </main>
-    <footer class="justify-between sticky top-[100vh]">
-      <Footer  />
-    </footer>
   </div>
 </template>

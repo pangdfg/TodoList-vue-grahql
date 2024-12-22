@@ -1,79 +1,76 @@
-import { defineStore } from 'pinia'
-
+import { defineStore } from 'pinia';
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
     list: [],
     selectedTodo: {},
-    statuses: ['All','Pending', 'Done']
+    statuses: ['All', 'Pending', 'Done']
   }),
   actions: {
-    async loadTodos () {
+    async loadTodos() {
       try {
-        // Using fake data instead of real API call
         this.list = [
-          { id: 1, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 10, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 11, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 12, name: 'Todoqweasd', status: 'Pending', isDone: false },
-          { id: 13, name: 'Todo 1qwdasdqwr', status: 'Pending', isDone: false },
-          { id: 14, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 15, name: 'Todoasdasdasdasdasdasdasdasdasdasdasdasdasdadasd', status: 'Pending', isDone: false },
-          { id: 16, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 17, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 18, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 19, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 110, name: 'Todo 1', status: 'Pending', isDone: false },
-          { id: 3, name: 'Todo 3', status: 'Done', isDone: true }
+          { id: 1, name: 'Todo 1', isDone: false },
+          { id: 2, name: 'Todo 2', isDone: true },
         ];
       } catch (error) {
-        console.log('error', error)
+        console.log('Error loading todos:', error);
       }
     },
-    async loadTodo (id) {
+    async loadTodo(id) {
       try {
-        const todoData = this.todoStore.list.find(todo => todo.id === id);
-        if (todoData) {
-          this.selectedTodo = todoData;
-        } else {
+        const todoData = this.list.find(todo => todo.id === id);
+        if (!todoData) {
           console.error(`Todo with ID ${id} not found`);
+          return null;
         }
+        this.selectedTodo = todoData;
       } catch (error) {
-        console.log('error', error)
+        console.log('Error loading todo:', error);
+        return null;
       }
     },
-    async addTodo (todoText) {
+    async addTodo(todoText) {
+      if (!todoText.trim()) {
+        console.error('Todo text cannot be empty');
+        return false;
+      }
       const newTodo = {
-        id: Date.now(), // Generate a unique ID
-        name: todoText,
+        id: Date.now(),
+        name: todoText.trim(),
         status: 'Pending',
         isDone: false
-      }
+      };
       try {
-        // Using fake data, directly push newTodo to list
         this.list.push(newTodo);
+        return true;
       } catch (error) {
-        console.log('error', error)
+        console.log('Error adding todo:', error);
+        return false;
       }
     },
-    async editTodo (todoData, id) {
+    async editTodo(todoData, id) {
       try {
-        // Find and update the todo with the given ID
         const index = this.list.findIndex(todo => todo.id === id);
-        if (index !== -1) {
-          this.list[index] = { ...this.list[index], ...todoData };
+        if (index === -1) {
+          console.error(`Todo with ID ${id} not found`);
+          return false;
         }
+        this.list[index] = { ...this.list[index], ...todoData };
+        return true;
       } catch (error) {
-        console.log('error', error)
+        console.log('Error editing todo:', error);
+        return false;
       }
     },
-    async removeTodo (id) {
+    async removeTodo(id) {
       try {
-        // Remove the todo with the given ID
         this.list = this.list.filter(todo => todo.id !== id);
+        return true;
       } catch (error) {
-        console.log('error', error)
+        console.log('Error removing todo:', error);
+        return false;
       }
     }
   }
-})
+});

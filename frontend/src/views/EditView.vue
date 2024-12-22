@@ -1,11 +1,11 @@
 <script setup>
 import { onMounted, ref, reactive } from 'vue'
-import { useTodoStore } from '../stores/todo'
+import { useTodoStore } from '@/stores/todo'
 import { useRoute, RouterLink } from 'vue-router'
-import Navbar from '../components/Navbar.vue'
+import UserLayout from '@/layouts/UserLayout.vue'
 
 
-import Loading from '../components/Loading.vue'
+import Loading from '@/components/Loading.vue'
 
 const todoStore = useTodoStore()
 const route = useRoute()
@@ -15,6 +15,10 @@ const isLoading = ref(false)
 const isUpdated = ref(false)
 
 const editTodo = async (todoData, todoId) => {
+  if (!todoData.name.trim()) {
+    alert('Item name cannot be empty.');
+    return;
+  }
   try {
     isLoading.value = true
     await todoStore.editTodo(todoData, todoId)
@@ -31,25 +35,32 @@ const editTodo = async (todoData, todoId) => {
 
 onMounted(async () => {
   try {
-    isLoading.value = true
-    const id = parseInt(route.params.id); 
+    isLoading.value = true;
+    const id = parseInt(route.params.id);
+    if (isNaN(id)) throw new Error('Invalid ID');
     todoData.value = await todoStore.loadTodo(id);
-    isLoading.value = false
+    console.log(todoData)
+    if (!todoData.value) throw new Error('Todo not found');
   } catch (error) {
-    console.log('error', error)
+    console.error('Error fetching todo:', error);
+  } finally {
+    isLoading.value = false;
   }
 })
 </script>
 
 <template>
-<div>
+<div class="min-h-screen">
   <header class=" justify-between">
-      <Navbar />
     </header>
+    <UserLayout> 
     <div class="max-w-4xl mx-auto p-4 mb-auto center">
   <div class="w-1/2 mx-auto">
     <div class="flex items-center">
-      <Loading v-if="isLoading"></Loading>
+      <div v-if="isLoading" class="flex justify-center items-center h-full">
+  <Loading />
+</div>
+
       <RouterLink :to="{ name: 'todo-view' }">
         <button class="btn btn-square">
           <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l160 160c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L109.2 288 416 288c17.7 0 32-14.3 32-32s-14.3-32-32-32l-306.7 0L214.6 118.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-160 160z"/></svg>
@@ -98,6 +109,7 @@ onMounted(async () => {
     </div>
   </div>
   </div>
+  </UserLayout> 
   </div>
 </template>
 

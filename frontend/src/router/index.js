@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import TodoView from '../views/TodoView.vue'
-import EditView from '../views/EditView.vue'
+import HomeView from '@/views/HomeView.vue'
+import TodoView from '@/views/TodoView.vue'
+import EditView from '@/views/EditView.vue'
+import ProfileView from '@/views/ProfileView.vue'
 
 
 const router = createRouter({
@@ -21,6 +22,11 @@ const router = createRouter({
       path: '/todo/:id/edit',
       name: 'edit-view',
       component: EditView
+    },
+    {
+      path: '/profile',
+      name: 'profile-view',
+      component: ProfileView
     }
   ],
 })

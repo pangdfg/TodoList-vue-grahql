@@ -20,5 +20,5 @@ func main() {
 	app.Post("/todos", middleware.JwtVerify ,handlers.CreateTodo)
 	app.Patch("/todos/:id/toggle", middleware.JwtVerify ,handlers.ToggleTodo)
 
-	log.Fatal(app.Listen(":3000"))
+	log.Fatal(app.Listen(":3001"))
 }

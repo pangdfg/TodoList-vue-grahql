@@ -9,3 +9,40 @@ services:
       MYSQL_DATABASE: db
     ports:
       - "3307:3306"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - api-gateway
+
+  todo-service:
+    build:
+      context: ./backend/todo-service
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    depends_on:
+      - mysql
+
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3002"
+    depends_on:
+      - mysql
+
+  api-gateway:
+    build:
+      context: ./backend/api-gateway
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    depends_on:
+      - todo-service
+      - user-service

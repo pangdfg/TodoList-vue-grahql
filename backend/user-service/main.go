@@ -4,6 +4,7 @@ import (
 	"log"
 	"user-service/database"
 	"user-service/handlers"
+	"user-service/middleware"
 	"user-service/models"
 
 	"github.com/gofiber/fiber/v2"
@@ -22,7 +23,9 @@ func main() {
 
 	app.Post("/register", handlers.Register)
 	app.Post("/login", handlers.Login)
-	app.Get("/profile", handlers.GetProfile)
+	app.Get("/profile", middleware.JwtVerify ,handlers.GetProfile)
+	app.Put("/username", middleware.JwtVerify ,handlers.UpdateUsername)
+	app.Post("/profile/image", middleware.JwtVerify ,handlers.UpdateProfileImage)
 
 	log.Fatal(app.Listen(":3000"))
 }

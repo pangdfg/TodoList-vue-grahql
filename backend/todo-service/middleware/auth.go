@@ -3,7 +3,6 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	"time"
 
 	"os"
 
@@ -12,15 +11,6 @@ import (
 )
 
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
-
-func GenerateToken(userID uint) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24).Unix(),
-	}
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(jwtSecret)
-}
 
 func JwtVerify(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")

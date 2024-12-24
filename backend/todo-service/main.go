@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"todo-service/handlers"
+	"todo-service/middleware"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
@@ -15,9 +16,9 @@ func main() {
 	}
 
 	app := fiber.New()
-	app.Get("/todos", handlers.GetTodos)
-	app.Post("/todos", handlers.CreateTodo)
-	app.Patch("/todos/:id/toggle", handlers.ToggleTodo)
+	app.Get("/todos", middleware.JwtVerify ,handlers.GetTodos)
+	app.Post("/todos", middleware.JwtVerify ,handlers.CreateTodo)
+	app.Patch("/todos/:id/toggle", middleware.JwtVerify ,handlers.ToggleTodo)
 
 	log.Fatal(app.Listen(":3000"))
 }

@@ -4,25 +4,17 @@ const bodyParser = require('body-parser');
 const { graphqlHTTP } = require('express-graphql');
 const PORT = 4000;
 
-const userSchema = require('./schemas/userSchema');
-const todoSchema = require('./schemas/todoSchema');
-const userResolver = require('./resolvers/userResolver');
-const todoResolver = require('./resolvers/todoResolver');
-const { verifyJWT } = require('./utils/auth');
+const Schema = require('./schemas/schema');
+const { verifyJWT } = require('./utils/jwtVerify');
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
 
-const schema = makeExecutableSchema({
-  typeDefs: [userSchema, todoSchema],
-  resolvers: [userResolver, todoResolver],
-});
-
 app.use('/graphql', (req, res, next) => {
   const { operationName } = req.body;
-  if (operationName === 'login' || operationName === 'register') {
+  if (operationName === 'login' || operationName === 'register' || req.originalUrl === '/graphql') {
     return next();
   }
   verifyJWT(req, res, next);
@@ -31,7 +23,7 @@ app.use('/graphql', (req, res, next) => {
 app.use(
   '/graphql',
   graphqlHTTP((req) => ({
-    schema,
+    Schema,
     graphiql: true,
     context: { user: req.user },
   }))

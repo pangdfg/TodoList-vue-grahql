@@ -25,12 +25,12 @@ func GenerateToken(userID uint) (string, error) {
 func JwtVerify(c *fiber.Ctx) error {
 	authHeader := c.Get("Authorization")
 	if authHeader == "" {
-		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Authorization header missing"})
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"status": http.StatusUnauthorized, "error": "Authorization header missing"})
 	}
 
 	tokenParts := strings.Split(authHeader, " ")
 	if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid Authorization header format"})
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"status": http.StatusUnauthorized, "error": "Invalid Authorization header format"})
 	}
 
 	token, err := jwt.Parse(tokenParts[1], func(token *jwt.Token) (interface{}, error) {
@@ -41,7 +41,7 @@ func JwtVerify(c *fiber.Ctx) error {
 	})
 
 	if err != nil || !token.Valid {
-		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid or expired token"})
+		return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"status": http.StatusUnauthorized, "error": "Invalid or expired token"})
 	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -51,5 +51,5 @@ func JwtVerify(c *fiber.Ctx) error {
 		}
 	}
 
-	return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"error": "Invalid token claims"})
+	return c.Status(http.StatusUnauthorized).JSON(fiber.Map{"status": http.StatusUnauthorized, "error": "Invalid token claims"})
 }

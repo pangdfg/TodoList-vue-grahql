@@ -27,5 +27,5 @@ func main() {
 	app.Put("/username", middleware.JwtVerify ,handlers.UpdateUsername)
 	app.Post("/profile/image", middleware.JwtVerify ,handlers.UpdateProfileImage)
 
-	log.Fatal(app.Listen(":3002"))
+	log.Fatal(app.Listen(":8080"))
 }

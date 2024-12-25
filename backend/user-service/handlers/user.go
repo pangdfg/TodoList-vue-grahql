@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -16,21 +17,25 @@ import (
 func Register(c *fiber.Ctx) error {
 	var user models.User
 	if err := c.BodyParser(&user); err != nil {
+		log.Printf("Error parsing request body: %v", err)
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"status": http.StatusBadRequest, "error": "Invalid request body"})
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Printf("Error hashing password: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to hash password"})
 	}
 	user.Password = string(hashedPassword)
 
 	if err := database.DB.Create(&user).Error; err != nil {
+		log.Printf("Error creating user: %v", err)
 		return c.Status(http.StatusConflict).JSON(fiber.Map{"status": http.StatusConflict, "error": "Username already exists"})
 	}
 
 	token, err := middleware.GenerateToken(user.ID)
 	if err != nil {
+		log.Printf("Error generating token: %v", err)
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to generate token"})
 	}
 
@@ -65,7 +70,7 @@ func Login(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to generate token"})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
 		"token": token,
 		"user": fiber.Map{
@@ -83,7 +88,7 @@ func GetProfile(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"status": http.StatusNotFound, "error": "User not found"})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
 		"id": user.ID,
 		"username": user.Username,
@@ -118,7 +123,7 @@ func UpdateProfileImage(c *fiber.Ctx) error {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to update user profile image"})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
 		"message": "Profile image updated successfully",
 		"profile_image": filePath,
@@ -165,7 +170,7 @@ func UpdateUsername(c *fiber.Ctx) error {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"status": http.StatusNotFound, "error": "User not found"})
 	}
 
-	return c.JSON(fiber.Map{
+	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
 		"message": "Username updated successfully",
 		"user": fiber.Map{

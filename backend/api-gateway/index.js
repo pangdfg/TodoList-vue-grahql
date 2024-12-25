@@ -23,7 +23,7 @@ app.use('/graphql', (req, res, next) => {
 app.use(
   '/graphql',
   graphqlHTTP((req) => ({
-    Schema,
+    schema: Schema, 
     graphiql: true,
     context: { user: req.user },
   }))

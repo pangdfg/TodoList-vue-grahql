@@ -1,11 +1,12 @@
 const axios = require('axios');
 
+const USER_API_URL = 'http://user-service:8080';
 const userResolver = {
   Query: {
-    profile: async (_, __, { user }) => {
+    profile: async ({ user }) => {
       try {
         if (!user) throw new Error("Not authenticated");
-        const response = await axios.get(`http://localhost:8080/profile`, {
+        const response = await axios.get(`${USER_API_URL}/profile`, {
           headers: { Authorization: `Bearer ${user.token}` },
         });
         return {
@@ -21,9 +22,9 @@ const userResolver = {
     },
   },
   Mutation: {
-    login: async (_, { username, password }) => {
+    login: async ({ username, password }) => {
       try {
-        const response = await axios.post(`http://localhost:8080/login`, {
+        const response = await axios.post(`${USER_API_URL}/login`, {
           username,
           password,
         });
@@ -41,14 +42,12 @@ const userResolver = {
         throw new Error("Failed to log in user");
       }
     },
-    register: async (_, { username, password }) => {
+    register: async ({ username, password }) => {
       try {
-        console.log('username:', username);
-        const response = await axios.post(`http://localhost:8080/register`, {
+        const response = await axios.post(`${USER_API_URL}/register`, {
           username,
           password,
         });
-        console.log('response:', response);
         return {
           status: response.status,
           token: response.data.token,
@@ -63,11 +62,11 @@ const userResolver = {
         throw new Error("Failed to register user");
       }
     },
-    updateProfileImage: async (_, { profileImage }, { user }) => {
+    updateProfileImage: async ({ profileImage }, { user }) => {
       try {
         if (!user) throw new Error("Not authenticated");
         const response = await axios.post(
-          `http://localhost:8080/profile/image`,
+          `${USER_API_URL}/profile/image`,
           { profileImage },
           { headers: { Authorization: `Bearer ${user.token}` } }
         );
@@ -82,11 +81,11 @@ const userResolver = {
         throw new Error("Failed to update profile image");
       }
     },
-    updateUsername: async (_, { newUsername }, { user }) => {
+    updateUsername: async ({ newUsername }, { user }) => {
       try {
         if (!user) throw new Error('Not authenticated');
         const response = await axios.put(
-          `http://localhost:8080/username`,
+          `${USER_API_URL}/username`,
           { newUsername },
           { headers: { Authorization: `Bearer ${user.token}` } }
         );

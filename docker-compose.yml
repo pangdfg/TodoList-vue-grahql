@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   mysql:
     image: mysql:8.0
@@ -8,8 +9,9 @@ services:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_USER=user
       - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=my-database
     ports:
-      - "3306:3306"
+      - 3306:3306
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
@@ -24,7 +26,7 @@ services:
       context: ./backend/todo-service
       dockerfile: Dockerfile
     ports:
-      - "8081:8081"
+      - 8081:8081
     networks:
       - backend_network
     depends_on:
@@ -44,7 +46,7 @@ services:
       context: ./backend/user-service
       dockerfile: Dockerfile
     ports:
-      - "8080:8080"
+      - 8080:8080
     networks:
       - backend_network
     depends_on:
@@ -64,7 +66,7 @@ services:
       context: ./backend/api-gateway
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - 4000:4000
     networks:
       - backend_network
     depends_on:

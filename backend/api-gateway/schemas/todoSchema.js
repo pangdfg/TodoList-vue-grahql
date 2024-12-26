@@ -1,6 +1,5 @@
-const { gql } = require('graphql-tag');
 
-const todoSchema = gql`
+const todoSchema = `
   type Todo {
     id: ID!
     title: String!

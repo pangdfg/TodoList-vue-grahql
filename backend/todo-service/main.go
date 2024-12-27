@@ -25,7 +25,6 @@ func main() {
 	app.Get("/todos",handlers.GetTodos)
 	app.Get("/todos/:id" ,handlers.GetTodosById)
 	app.Post("/todos" ,handlers.CreateTodo)
-	app.Patch("/todos/:id/toggle" ,handlers.ToggleTodo)
 	app.Patch("/todos/:id/edit" ,handlers.EditTodo)
 
 	log.Fatal(app.Listen(":8081"))

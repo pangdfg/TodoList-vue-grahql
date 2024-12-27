@@ -21,11 +21,17 @@ app.use('/graphql', (req, res, next) => {
 
 app.use(
   '/graphql',
-  graphqlHTTP((req) => ({
-    schema: Schema, 
-    graphiql: true,
-    context: { user: req.user },
-  }))
+  graphqlHTTP((req) => {
+    const authHeader = req.headers.authorization || req.headers.Authorization;
+    const token = authHeader ? authHeader.split(' ')[1] : null;
+    return {
+      schema: Schema, 
+      graphiql: true,
+      context: { 
+        userAuth: token,
+      },
+    };
+  })
 );
 
 app.listen(PORT, () => {

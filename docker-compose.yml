@@ -72,9 +72,12 @@ services:
       - 4000:4000
     networks:
       - backend_network
+    environment:
+      - JWT_SECRET="supersecret"
     depends_on:
       - todo-service
       - user-service
+
 
 networks:
   backend_network:

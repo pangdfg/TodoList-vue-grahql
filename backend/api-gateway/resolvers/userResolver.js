@@ -3,11 +3,10 @@ const axios = require('axios');
 const USER_API_URL = 'http://user-service:8080';
 const userResolver = {
   Query: {
-    profile: async (__ ,{ user }) => {
+    profile: async (_, __, { userAuth }) => {
       try {
-        if (!user) throw new Error("Not authenticated");
         const response = await axios.get(`${USER_API_URL}/profile`, {
-          headers: { Authorization: `Bearer ${user.token}` },
+          headers: { Authorization: `Bearer ${userAuth}` },
         });
         return {
           status: response.status,
@@ -17,12 +16,15 @@ const userResolver = {
         };
       } catch (error) {
         console.error("Error fetching profile:", error.response ? error.response.data : error.message);
-        throw new Error("Failed to fetch profile");
+        return {
+          status: error.response ? error.response.status : 500,
+          message: error.response ? error.response.data : error.message,
+        };
       }
     },
   },
   Mutation: {
-    login: async (_ ,{ username, password }) => {
+    login: async (_, { username, password }) => {
       try {
         const response = await axios.post(`${USER_API_URL}/login`, {
           username,
@@ -39,10 +41,13 @@ const userResolver = {
         };
       } catch (error) {
         console.error("Error logging in user:", error.response ? error.response.data : error.message);
-        throw new Error("Failed to log in user");
+        return {
+          status: error.response ? error.response.status : 500,
+          message: error.response ? error.response.data : error.message,
+        };
       }
     },
-    register: async (_ ,{ username, password }) => {
+    register: async (_, { username, password }) => {
       try {
         const response = await axios.post(`${USER_API_URL}/register`, {
           username,
@@ -59,16 +64,18 @@ const userResolver = {
         };
       } catch (error) {
         console.error("Error registering user:", error.response ? error.response.data : error.message);
-        throw new Error("Failed to register user");
+        return {
+          status: error.response ? error.response.status : 500,
+          message: error.response ? error.response.data : error.message,
+        };
       }
     },
-    updateProfileImage: async (_ ,{ profileImage }, { user }) => {
+    updateProfileImage: async (_, { profileImage }, { userAuth }) => {
       try {
-        if (!user) throw new Error("Not authenticated");
         const response = await axios.post(
           `${USER_API_URL}/profile/image`,
           { profileImage },
-          { headers: { Authorization: `Bearer ${user.token}` } }
+          { headers: { Authorization: `Bearer ${userAuth}` } }
         );
         return {
           status: response.status,
@@ -78,16 +85,18 @@ const userResolver = {
         };
       } catch (error) {
         console.error("Error updating profile image:", error.response ? error.response.data : error.message);
-        throw new Error("Failed to update profile image");
+        return {
+          status: error.response ? error.response.status : 500,
+          message: error.response ? error.response.data : error.message,
+        };
       }
     },
-    updateUsername: async (_ ,{ newUsername }, { user }) => {
+    updateUsername: async (_, { newUsername }, { userAuth }) => {
       try {
-        if (!user) throw new Error('Not authenticated');
         const response = await axios.put(
           `${USER_API_URL}/username`,
           { newUsername },
-          { headers: { Authorization: `Bearer ${user.token}` } }
+          { headers: { Authorization: `Bearer ${userAuth}` } }
         );
         return {
           status: response.status,
@@ -97,7 +106,10 @@ const userResolver = {
         };
       } catch (error) {
         console.error("Error updating username:", error.response ? error.response.data : error.message);
-        throw new Error("Failed to update username");
+        return {
+          status: error.response ? error.response.status : 500,
+          message: error.response ? error.response.data : error.message,
+        };
       }
     },
   },

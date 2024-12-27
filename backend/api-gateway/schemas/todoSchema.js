@@ -1,5 +1,3 @@
-
-
 const todoSchema = `
   type Todo {
     id: ID!
@@ -9,7 +7,8 @@ const todoSchema = `
   }
 
   type Query {
-    todo: [Todo!]
+    todos: [Todo!]
+    todoById(id: ID!): Todo!
   }
 
   type Mutation {

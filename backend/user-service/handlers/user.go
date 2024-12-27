@@ -33,7 +33,6 @@ func Register(c *fiber.Ctx) error {
 		return c.Status(http.StatusConflict).JSON(fiber.Map{"status": http.StatusConflict, "error": "Username already exists"})
 	}
 
-	// Ensure user ID is set correctly
 	if user.ID == 0 {
 		log.Printf("Error: User ID is not set")
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to create user"})

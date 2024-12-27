@@ -6,7 +6,7 @@ const  todoResolver  = require('../resolvers/todoResolver');
 
 const schema = makeExecutableSchema({
     typeDefs: [ userSchema, todoSchema],
-    resolvers: [userResolver, todoResolver],
+    resolvers: [ userResolver, todoResolver],
 });
 
 module.exports = schema;

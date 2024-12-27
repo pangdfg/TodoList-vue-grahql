@@ -1,7 +1,7 @@
 const axios = require('axios');
 require('dotenv').config()
 
-const TODO_API_URL = process.env.TODO_SERVICE || 'http://todo-service:8080';
+const TODO_API_URL = process.env.TODO_SERVICE || 'http://todo-service:8081';
 
 const todoResolver = {
   Query: {
@@ -10,14 +10,31 @@ const todoResolver = {
         const response = await axios.get(`${TODO_API_URL}/todos`, {
           headers: { Authorization: `Bearer ${userAuth}` },
         });
-        return {
-          status: response.status,
-          todos: response.data.todos.map(todo => ({
-            id: todo.id,
+        if (response.data.status === 200 && Array.isArray(response.data.todos)) {
+          return response.data.todos.map(todo => ({
+            id: todo.ID,
             title: todo.title,
             checked: todo.checked,
             userId: todo.userId,
-          })),
+          }));
+        }
+        return [];
+      } catch (error) {
+        console.error("Error fetching todos:", error.response ? error.response.data : error.message);
+        return [];
+      }
+    },
+    todoById: async (_, { id }, { userAuth }) => {
+      try {
+        const response = await axios.get(`${TODO_API_URL}/todos/${id}`, {
+          headers: { Authorization: `Bearer ${userAuth}` },
+        });
+        return {
+          status: response.status,
+          id: response.data.id,
+          title: response.data.title,
+          checked: response.data.checked,
+          userId: response.data.userId,
         };
       } catch (error) {
         console.error("Error fetching todos:", error.response ? error.response.data : error.message);
@@ -77,7 +94,7 @@ const todoResolver = {
       try {
         const response = await axios.patch(
           `${TODO_API_URL}/todos/${id}/edit`,
-          {id, title, checked},
+          { title, checked},
           { headers: { Authorization: `Bearer ${userAuth}` } }
         );
         return {

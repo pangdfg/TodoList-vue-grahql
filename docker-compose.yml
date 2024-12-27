@@ -74,6 +74,8 @@ services:
       - backend_network
     environment:
       - JWT_SECRET="supersecret"
+      - USER_SERVICE=http://user-service:8080
+      - TODO_SERVICE=http://todo-service:8081
     depends_on:
       - todo-service
       - user-service

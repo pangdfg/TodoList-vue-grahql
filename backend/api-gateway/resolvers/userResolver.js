@@ -1,6 +1,7 @@
 const axios = require('axios');
+require('dotenv').config()
 
-const USER_API_URL = 'http://user-service:8080';
+const USER_API_URL = process.env.USER_SERVICE || 'http://user-service:8080';
 const userResolver = {
   Query: {
     profile: async (_, __, { userAuth }) => {

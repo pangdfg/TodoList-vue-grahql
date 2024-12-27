@@ -1,6 +1,7 @@
 const axios = require('axios');
+require('dotenv').config()
 
-const TODO_API_URL = 'http://todo-service:8080';
+const TODO_API_URL = process.env.TODO_SERVICE || 'http://todo-service:8080';
 
 const todoResolver = {
   Query: {

@@ -9,11 +9,11 @@ const todoSchema = `
   }
 
   type Query {
-    todos(userId: ID!): [Todo!]
+    todo: [Todo!]
   }
 
   type Mutation {
-    createTodo(title: String!, userId: ID!): Todo!
+    createTodo(title: String!): Todo!
     toggleTodo(id: ID!): Todo!
   }
 `;

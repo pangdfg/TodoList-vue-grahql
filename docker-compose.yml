@@ -22,6 +22,7 @@ services:
 
   todo-service:
     restart: always
+    container_name: todo-service
     build:
       context: ./backend/todo-service
       dockerfile: Dockerfile
@@ -42,6 +43,7 @@ services:
 
   user-service:
     restart: always
+    container_name: user-service
     build:
       context: ./backend/user-service
       dockerfile: Dockerfile
@@ -62,6 +64,7 @@ services:
 
   api-gateway:
     restart: always
+    container_name: api-gateway
     build:
       context: ./backend/api-gateway
       dockerfile: Dockerfile

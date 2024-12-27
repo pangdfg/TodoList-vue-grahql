@@ -4,9 +4,8 @@ const bodyParser = require('body-parser');
 const { graphqlHTTP } = require('express-graphql');
 const PORT = 4000;
 
-const Schema = require('./schemas/schema');
 const { verifyJWT } = require('./utils/jwtVerify');
-
+const Schema = require('./schemas/schema');
 const app = express();
 
 app.use(cors());
@@ -31,4 +30,5 @@ app.use(
 
 app.listen(PORT, () => {
     console.log(`🚀 API Gateway running at http://localhost:${PORT}/graphql`);
-  });
+});
+

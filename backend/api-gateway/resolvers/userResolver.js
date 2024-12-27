@@ -3,7 +3,7 @@ const axios = require('axios');
 const USER_API_URL = 'http://user-service:8080';
 const userResolver = {
   Query: {
-    profile: async ({ user }) => {
+    profile: async (__ ,{ user }) => {
       try {
         if (!user) throw new Error("Not authenticated");
         const response = await axios.get(`${USER_API_URL}/profile`, {
@@ -22,7 +22,7 @@ const userResolver = {
     },
   },
   Mutation: {
-    login: async ({ username, password }) => {
+    login: async (_ ,{ username, password }) => {
       try {
         const response = await axios.post(`${USER_API_URL}/login`, {
           username,
@@ -42,7 +42,7 @@ const userResolver = {
         throw new Error("Failed to log in user");
       }
     },
-    register: async ({ username, password }) => {
+    register: async (_ ,{ username, password }) => {
       try {
         const response = await axios.post(`${USER_API_URL}/register`, {
           username,
@@ -62,7 +62,7 @@ const userResolver = {
         throw new Error("Failed to register user");
       }
     },
-    updateProfileImage: async ({ profileImage }, { user }) => {
+    updateProfileImage: async (_ ,{ profileImage }, { user }) => {
       try {
         if (!user) throw new Error("Not authenticated");
         const response = await axios.post(
@@ -81,7 +81,7 @@ const userResolver = {
         throw new Error("Failed to update profile image");
       }
     },
-    updateUsername: async ({ newUsername }, { user }) => {
+    updateUsername: async (_ ,{ newUsername }, { user }) => {
       try {
         if (!user) throw new Error('Not authenticated');
         const response = await axios.put(

@@ -20,7 +20,7 @@ const todoResolver = {
         }
         return [];
       } catch (error) {
-        console.error("Error fetching todos:", error.response ? error.response.data : error.message);
+        console.error("Error fetching todos:", error.response ? error.response.data.error : error.message);
         return [];
       }
     },
@@ -40,7 +40,7 @@ const todoResolver = {
         console.error("Error fetching todos:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },
@@ -64,7 +64,7 @@ const todoResolver = {
         console.error("Error creating todo:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },
@@ -86,7 +86,7 @@ const todoResolver = {
         console.error("Error toggling todo:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },

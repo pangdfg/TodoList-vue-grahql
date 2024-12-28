@@ -19,7 +19,7 @@ const userResolver = {
         console.error("Error fetching profile:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },
@@ -44,7 +44,7 @@ const userResolver = {
         console.error("Error logging in user:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },
@@ -67,7 +67,7 @@ const userResolver = {
         console.error("Error registering user:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },
@@ -88,7 +88,7 @@ const userResolver = {
         console.error("Error updating profile image:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },
@@ -109,7 +109,7 @@ const userResolver = {
         console.error("Error updating username:", error.response ? error.response.data : error.message);
         return {
           status: error.response ? error.response.status : 500,
-          message: error.response ? error.response.data : error.message,
+          message: error.response ? error.response.data.error : error.message,
         };
       }
     },

@@ -9,10 +9,18 @@ import (
 )
 
 func GetTodos(c *fiber.Ctx) error {
-
+	userID := c.Locals("user_id").(uint)
+	
 	var todos []models.Todo
-	if err := database.DB.Find(&todos).Error; err != nil {
+	if err := database.DB.Where("user_id = ?", userID).Find(&todos).Error; err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to fetch todos"})
+	}
+
+	if len(todos) == 0 {
+		return c.Status(http.StatusOK).JSON(fiber.Map{
+			"status": http.StatusOK,
+			"todos": []models.Todo{},
+		})
 	}
 
 	return c.Status(http.StatusOK).JSON(fiber.Map{

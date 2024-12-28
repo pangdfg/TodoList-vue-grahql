@@ -8,11 +8,19 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func userIdFromToken(c *fiber.Ctx) uint {
+	id, ok := c.Locals("user_id").(uint)
+	if !ok {
+		return 0
+	}
+	return id
+}
+
 func GetTodos(c *fiber.Ctx) error {
-	userID := c.Locals("user_id").(uint)
+	userID := userIdFromToken(c)
 	
 	var todos []models.Todo
-	if err := database.DB.Where("user_id = ?", userID).Find(&todos).Error; err != nil {
+	if err := database.DB.Where("UserId = ?", userID).Order("created_at desc").Find(&todos).Error; err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to fetch todos"})
 	}
 
@@ -36,28 +44,27 @@ func GetTodosById(c *fiber.Ctx) error {
 	if err := database.DB.First(&todo, id).Error; err != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"status": http.StatusNotFound, "error": "Todo not found"})
 	}
-
+	if todo.UserId != userIdFromToken(c) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{"status": http.StatusForbidden, "error": "You are not authorized to view this todo"})
+	}
 	return c.Status(http.StatusOK).JSON(fiber.Map{
 		"status": http.StatusOK,
 		"id": todo.ID,
 		"title": todo.Title,
 		"checked": todo.Checked,
-		"userId": todo.UserID,
+		"userId": todo.UserId,
 	})
 }
 
 func CreateTodo(c *fiber.Ctx) error {
-	userID, ok := c.Locals("user_id").(uint)
-	if !ok {
-		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"status": http.StatusBadRequest, "error": "Invalid user ID"})
-	}
+	userID := userIdFromToken(c)
 
 	var todo models.Todo
 	if err := c.BodyParser(&todo); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(fiber.Map{"status": http.StatusBadRequest, "error": "Invalid request body"})
 	}
 
-	todo.UserID = userID
+	todo.UserId = userID
 	if err := database.DB.Create(&todo).Error; err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to create todo"})
 	}
@@ -67,7 +74,7 @@ func CreateTodo(c *fiber.Ctx) error {
 		"id": todo.ID,
 		"title": todo.Title,
 		"checked": todo.Checked,
-		"userId": todo.UserID,
+		"userId": todo.UserId,
 	})
 }
 
@@ -77,6 +84,10 @@ func EditTodo(c *fiber.Ctx) error {
 
 	if err := database.DB.First(&todo, id).Error; err != nil {
 		return c.Status(http.StatusNotFound).JSON(fiber.Map{"status": http.StatusNotFound, "error": "Todo not found"})
+	}
+
+	if todo.UserId != userIdFromToken(c) {
+		return c.Status(http.StatusForbidden).JSON(fiber.Map{"status": http.StatusForbidden, "error": "You are not authorized to edit this todo"})
 	}
 
 	if err := c.BodyParser(&todo); err != nil {
@@ -92,6 +103,6 @@ func EditTodo(c *fiber.Ctx) error {
 		"id": todo.ID,
 		"title": todo.Title,
 		"checked": todo.Checked,
-		"userId": todo.UserID,
+		"userId": todo.UserId,
 	})
 }

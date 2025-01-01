@@ -10,12 +10,13 @@ const todoResolver = {
         const response = await axios.get(`${TODO_API_URL}/todos`, {
           headers: { Authorization: `Bearer ${userAuth}` },
         });
+        console.log(response.data)
         if (response.data.status === 200 && Array.isArray(response.data.todos)) {
           return response.data.todos.map(todo => ({
             id: todo.ID,
             title: todo.title,
             checked: todo.checked,
-            userId: todo.userId,
+            userId: todo.userid,
           }));
         }
         return [];

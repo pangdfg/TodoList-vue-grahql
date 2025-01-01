@@ -20,7 +20,7 @@ func GetTodos(c *fiber.Ctx) error {
 	userID := userIdFromToken(c)
 	
 	var todos []models.Todo
-	if err := database.DB.Where("UserId = ?", userID).Order("created_at desc").Find(&todos).Error; err != nil {
+	if err := database.DB.Where("user_id = ?", userID).Order("created_at desc").Find(&todos).Error; err != nil {
 		return c.Status(http.StatusInternalServerError).JSON(fiber.Map{"status": http.StatusInternalServerError, "error": "Failed to fetch todos"})
 	}
 

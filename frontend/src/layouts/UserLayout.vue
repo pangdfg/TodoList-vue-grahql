@@ -48,6 +48,7 @@ const currentYear = ref(new Date().getFullYear());
 </script>
 
 <template>
+<nav class="w-full top-0 left-0">
   <div class="navbar bg-neutral shadow-black">
     <div class="flex-1"@click="gohome"> 
         <a class="btn btn-ghost text-xl">To do List</a>
@@ -79,6 +80,7 @@ const currentYear = ref(new Date().getFullYear());
       </div>
     </div>
   </div>
+  </nav>
   <div class="min-h-screen">
     <slot></slot>
   </div>

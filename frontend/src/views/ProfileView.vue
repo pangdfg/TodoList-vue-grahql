@@ -1,6 +1,22 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import UserLayout from '@/layouts/UserLayout.vue'
+import { isLoggedIn, checkAuth } from '@/stores/UserStore';
+
+export default {
+  data() {
+    return {
+      loggedIn: false,
+    };
+  },
+  created() {
+    this.loggedIn = isLoggedIn();
+    if (!this.loggedIn) {
+      checkAuth();
+    }
+    const token = localStorage.getItem("token");
+  },
+};
 
 const userForm = [
   { name: 'Email', field: 'email' },

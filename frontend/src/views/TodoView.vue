@@ -2,8 +2,9 @@
 import { onMounted, ref, computed } from "vue";
 import { RouterLink } from "vue-router";
 import UserLayout from "@/layouts/UserLayout.vue";
+import { isLoggedIn, checkAuth } from '@/stores/UserStore';
 
-import { useTodoStore } from "@/stores/todo";
+import { useTodoStore } from "@/stores/todoStore";
 
 import Loading from "@/components/Loading.vue";
 
@@ -12,6 +13,7 @@ const todoText = ref("");
 const isLoading = ref(false);
 
 const selectedStatus = ref("All");
+
 
 onMounted(async () => {
   isLoading.value = true;
@@ -65,11 +67,9 @@ const updateStatus = async (todoId, todoStatus) => {
 const changeDoneStatus = async (event, todoId) => {
   isLoading.value = true;
   try {
-    if (event.target.checked) {
-      const isDone = event.target.checked;
-      this.todoStore.editTodo({ isDone }, todoId);
-      await todoStore.loadTodos();
-    }
+    const isDone = event.target.checked;
+    await todoStore.editTodo({ checked: isDone }, todoId);
+    await todoStore.loadTodos();
   } catch (error) {
     console.log("error", error);
   }

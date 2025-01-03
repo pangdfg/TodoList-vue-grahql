@@ -2,14 +2,15 @@
 import { ref, onMounted } from 'vue';
 import { useRouter, RouterLink } from 'vue-router';
 import Loading from '@/components/Loading.vue'
+import { isLoggedIn as checkIsLoggedIn, checkAuth } from '@/stores/UserStore';
+import { logout as logoutUser } from '@/api/index.js';
 
 const isLoggedIn = ref(false);
 const router = useRouter();
 const isLoading = ref(false)
 
-
 const checkLoginStatus = () => {
-  isLoggedIn.value = Boolean(localStorage.getItem('login'));
+  isLoggedIn.value = checkIsLoggedIn();
 };
 
 onMounted(() => {
@@ -26,21 +27,19 @@ const gohome = () => {
 
 
 const login = () => {
-  isLoggedIn.value = true;
   localStorage.setItem('login', JSON.stringify(true));
-    router.push({ name: 'todo-view' });
+    router.push({ name: 'login' });
 };
 
 const logout = () => {
   localStorage.removeItem('login');
   localStorage.removeItem('cart-item');
   localStorage.removeItem('checkout-data');
-  isLoggedIn.value = false;
+  logoutUser();
   router.push({ name: 'home' });
 };
 
 const goprofile = () => {
-    isLoading.value = true
     router.push({ name: 'profile-view' });
 }
 

@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia';
+import api from '@/api/index.js';
+import { createTodo, editTodo, deleteTodo } from '@/api/index.js';
 
 export const useTodoStore = defineStore('todo', {
   state: () => ({
@@ -9,10 +11,30 @@ export const useTodoStore = defineStore('todo', {
   actions: {
     async loadTodos() {
       try {
-        this.list = [
-          { id: 1, name: 'Todo 1', isDone: false },
-          { id: 2, name: 'Todo 2', isDone: true },
-        ];
+        const response = await fetch('/graphql', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({
+            query: `
+              query {
+                todos {
+                  id
+                  title
+                  checked
+                  userId
+                }
+              }
+            `
+          })
+        });
+        const data = await response.json();
+        if (data.errors) {
+          throw new Error(data.errors[0].message);
+        }
+        this.list = data.data.todos;
       } catch (error) {
         console.log('Error loading todos:', error);
       }
@@ -35,13 +57,8 @@ export const useTodoStore = defineStore('todo', {
         console.error('Todo text cannot be empty');
         return false;
       }
-      const newTodo = {
-        id: Date.now(),
-        name: todoText.trim(),
-        status: 'Pending',
-        isDone: false
-      };
       try {
+        const newTodo = await createTodo(todoText.trim());
         this.list.push(newTodo);
         return true;
       } catch (error) {
@@ -51,12 +68,13 @@ export const useTodoStore = defineStore('todo', {
     },
     async editTodo(todoData, id) {
       try {
+        const updatedTodo = await editTodo(id, todoData.title, todoData.checked);
         const index = this.list.findIndex(todo => todo.id === id);
         if (index === -1) {
           console.error(`Todo with ID ${id} not found`);
           return false;
         }
-        this.list[index] = { ...this.list[index], ...todoData };
+        this.list[index] = updatedTodo;
         return true;
       } catch (error) {
         console.log('Error editing todo:', error);
@@ -65,6 +83,7 @@ export const useTodoStore = defineStore('todo', {
     },
     async removeTodo(id) {
       try {
+        await deleteTodo(id);
         this.list = this.list.filter(todo => todo.id !== id);
         return true;
       } catch (error) {

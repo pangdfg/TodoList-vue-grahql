@@ -1,4 +1,3 @@
-
 const userSchema = `
   type User {
     id: ID!
@@ -7,6 +6,7 @@ const userSchema = `
   }
 
   type AuthPayload {
+    status: String!
     token: String!
     user: User!
   }

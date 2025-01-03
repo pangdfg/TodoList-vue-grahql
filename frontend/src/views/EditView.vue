@@ -3,9 +3,25 @@ import { onMounted, ref, reactive } from 'vue'
 import { useTodoStore } from '@/stores/todo'
 import { useRoute, RouterLink } from 'vue-router'
 import UserLayout from '@/layouts/UserLayout.vue'
+import { isLoggedIn, checkAuth } from '@/stores/UserStore';
 
 
 import Loading from '@/components/Loading.vue'
+
+export default {
+  data() {
+    return {
+      loggedIn: false,
+    };
+  },
+  created() {
+    this.loggedIn = isLoggedIn();
+    if (!this.loggedIn) {
+      checkAuth();
+    }
+    const token = localStorage.getItem("token");
+  },
+};
 
 const todoStore = useTodoStore()
 const route = useRoute()

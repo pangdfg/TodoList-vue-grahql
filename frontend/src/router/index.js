@@ -29,7 +29,7 @@ const router = createRouter({
       name: 'todo-view',
       component: TodoView,
       meta: {
-        reqiresAuth: true
+        requiresAuth: true
       }
     },
     {
@@ -37,7 +37,7 @@ const router = createRouter({
       name: 'edit-view',
       component: EditView,
       meta: {
-        reqiresAuth: true
+        requiresAuth: true
       }
     },
     {
@@ -45,21 +45,22 @@ const router = createRouter({
       name: 'profile-view',
       component: ProfileView,
       meta: {
-        reqiresAuth: true
+        requiresAuth: true
       }
     }
   ],
 })
 
 router.beforeEach((to, from, next) => {
-  if(to.meta.reqiresAuth) {
+  if (to.meta.requiresAuth) {
     const token = localStorage.getItem('token');
-    if(!token) {
-      return next();
+    if (!token) {
+      return next('/login');
     }
-    next("/login");
-  } else{
+    next();
+  } else {
     next();
   }
-  })
+});
+
 export default router

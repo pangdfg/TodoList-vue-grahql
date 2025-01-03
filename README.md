@@ -7,7 +7,7 @@ This project is a full-stack Todo List application built using Vue.js for the fr
 1. Ensure you have Docker and Docker Compose installed on your machine.
 2. Clone the repository:
    ```sh
-   git clone https://github.com/pangdfg/todo-list-fullstack.git
+   git clone https://github.com/pangdfg/TodoList-vue-grahql.git
    ```
 3. Navigate to the project directory:
    ```sh
